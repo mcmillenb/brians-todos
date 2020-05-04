@@ -16,7 +16,7 @@ def add_item():
 
     # Add item to the list
     res_data = helper.add_to_list(item)
-    
+
     # Return error if item not added
     if res_data is None:
         response = Response("{'error': 'Item not added - " + item + "'}", status=400, mimetype='application/json')
@@ -46,12 +46,12 @@ def get_item():
 
     # Return 404 if item not found
     if status is None:
-        response = Response("{'error': 'Item Not Found - %s'}" % item_name, status=404, mimetype='application/json')
+        response = Response("{\"error\": \"Item Not Found - %s\"}" % item_name, status=404, mimetype='application/json')
         return response
 
-    # Return status 
+    # Return status
     res_data = {
-      'status': status
+        'status': status
     }
 
     response = Response(json.dumps(res_data), status=200, mimetype='application/json')
@@ -61,15 +61,20 @@ def get_item():
 def update_status():
     # Get item from the POST body
     req_data = request.get_json()
-    item = req_data['item']
-    status = req_data['status']
 
-    # Update item in the list
-    res_data = helper.update_status(item, status)
+    res_data = None
+    item = None
+    status = None
+    if req_data:
+        item = req_data['item']
+        status = req_data['status']
+
+        # Update item in the list
+        res_data = helper.update_status(item, status)
 
     # Return error if the status could not be updated
     if res_data is None:
-        response = Response("{'error': 'Error updating item - '" + item + ", " + status + "}", status=400, mimetype='application/json')
+        response = Response("{\"error\": \"Error updating item - %s, %s\"}" % (item, status), status=400, mimetype='application/json')
         return response
 
     # Return response
@@ -80,14 +85,18 @@ def update_status():
 def delete_item():
     # Get item from the POST body
     req_data = request.get_json()
-    item = req_data['item']
 
-    # Delete item from the list
-    res_data = helper.delete_item(item)
+    res_data = None
+    item = None
+    if req_data:
+        item = req_data['item']
+
+        # Delete item from the list
+        res_data = helper.delete_item(item)
 
     # Return error if the item could not be deleted
     if res_data is None:
-        response = Response("{'error': 'Error deleting item - '" + item + "}", status=400, mimetype='application/json')
+        response = Response("{\"error\": \"Error deleting item - %s\"}" % item, status=400, mimetype='application/json')
         return response
 
     # Return response
